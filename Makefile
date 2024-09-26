@@ -6,7 +6,7 @@
 #    By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/19 20:31:23 by mprofett          #+#    #+#              #
-#    Updated: 2024/09/23 13:44:23 by mprofett         ###   ########.fr        #
+#    Updated: 2024/09/26 19:46:02 by mprofett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,7 @@ ${LIBFT}:
 
 clean:
 	${RM} ${OBJ} ${OBJ_BONUS}
+	${MAKE} clean -C ${LIBFT_PATH}
 
 fclean: clean
 	${RM} ${NAME} ${LIBFT}
