@@ -6,7 +6,7 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:02:00 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/26 14:43:07 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/26 19:22:46 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	prebuild_arp_reply(char **argv)
 	inet_pton(AF_INET, argv[1], reply_frame->arp_src_ip);
 	encode_mac_str(argv[4], reply_frame->arp_dest_mac);
 	inet_pton(AF_INET, argv[3], reply_frame->arp_dest_ip);
-	print_raw((unsigned char *)reply_frame, ARP_SIZE);
 }
 
 void	signalHandler(int code)
