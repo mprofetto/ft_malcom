@@ -6,7 +6,7 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:01:52 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/27 12:32:31 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:55:45 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,29 @@ void	init_data(char *interface)
     sockinfo->socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 	strncpy(ifr.ifr_name, interface, IFNAMSIZ);
     if (sockinfo->socket == -1)
+	{
         exit_error("Raw socket creation failed\n");
+	}
 	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_RCVTIMEO, &sockinfo->timeout, sizeof(struct timeval)) == -1)
+	{
         exit_error("Socket Time Out option configuration failed\n");
+	}
 	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_SNDTIMEO, &sockinfo->timeout, sizeof(struct timeval)) == -1)
-        exit_error("Socket Time Out option configuration failed\n");
+    {
+		exit_error("Socket Time Out option configuration failed\n");
+	}
 	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_BINDTODEVICE, (void*)&ifr, sizeof(ifr)) == -1)
-        exit_error("Socket Interface Binding configuration failed\n");
-    if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_TIMESTAMP, &disable, sizeof(enable)) == -1)
+	{
+		exit_error("Socket Interface Binding configuration failed\n");
+	}	
+    if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_TIMESTAMP, &disable, sizeof(disable)) == -1)
+	{
         exit_error("Socket Timestamp option disactivation failed\n");
+	}
 	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_PRIORITY, &priority, sizeof(priority)) == -1)
-    	exit_error("Failed to set socket priority\n");
+    {
+		exit_error("Failed to set socket priority\n");
+	}
 
 }
 

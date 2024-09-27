@@ -6,7 +6,7 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:02:00 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/27 12:32:53 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:53:25 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,9 @@ char	*compare_addresses(u_int32_t *source, u_int32_t *target, struct ifaddrs *in
 		{
 			addr = (struct sockaddr_in *)interface_address->ifa_addr;
 			mask = (struct sockaddr_in *)interface_address->ifa_netmask;
-			printf("interface checked: %s\n", interface_address->ifa_name);
-
 			maskedtarget = *target & mask->sin_addr.s_addr;
 			maskedsource = *source & mask->sin_addr.s_addr;
 			maskedinterface = addr->sin_addr.s_addr & mask->sin_addr.s_addr;
-			printf("interfacemasked: %u\n", maskedinterface);
-			printf("targetmasked: %u\n", maskedtarget);
-			printf("sourcemasked: %u\n", maskedsource);
 			if (maskedtarget == maskedsource && maskedtarget == maskedinterface)
 				result = ft_strdup(interface_address->ifa_name);
 		}
@@ -121,7 +116,6 @@ int main(int argc, char **argv)
 			if (*(u_int32_t *)request_frame->arp_dest_ip == int_target_to_spoof && *(u_int32_t *)request_frame->arp_src_ip == int_source_to_spoof)
 			{
 				bytes_recv = sendto(sockinfo->socket, (void *)reply_frame, 42, 0, &sockinfo->addr, sockinfo->socklen);
-				printf("bytes send: %d\n", bytes_recv);
 				print_frame_infos(request_frame);
 				print_frame_infos((ArpFrame *)reply_frame);
 				return (0);
