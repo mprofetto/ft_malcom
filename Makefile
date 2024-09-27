@@ -6,7 +6,7 @@
 #    By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/19 20:31:23 by mprofett          #+#    #+#              #
-#    Updated: 2024/09/26 19:46:02 by mprofett         ###   ########.fr        #
+#    Updated: 2024/09/26 23:27:11 by mprofett         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ LIBFT		= libft.a
 
 LIBFT_PATH	= libft
 
-C_FLAGS	= -Wall -Wextra -Werror
+C_FLAGS	= -Wall -Wextra -Werror -O3
 
 %.o: %.c
 	$(CC) $(C_FLAGS) -c $< -o $@

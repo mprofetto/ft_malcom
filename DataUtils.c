@@ -6,7 +6,7 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:01:52 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/26 15:19:17 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:32:31 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,14 @@ void	encode_size(char *size, unsigned char *field)
 
 void	init_data(char *interface)
 {
-	struct ifreq ifr;
+	struct ifreq 	ifr;
+	int				disable = 0;
+	int 			priority = 6;
 
 	request_frame = malloc(ARP_SIZE);
 	if (!request_frame)
 		exit_error("Malloc failure when initialing request frame\n");
-	reply_frame = malloc(ARP_SIZE);
+	reply_frame = malloc(42);
 	if (!reply_frame)
 		exit_error("Malloc failure when initialing request frame\n");		
 	sockinfo = malloc(sizeof(SocketInfo));
@@ -75,17 +77,22 @@ void	init_data(char *interface)
 		exit_error("Malloc failure when initialing sockinfo\n");
 	sockinfo->socklen = sizeof(struct sockaddr);
 	sockinfo->timeout.tv_sec = 0;
-    sockinfo->timeout.tv_usec = 0;
+    sockinfo->timeout.tv_usec = 1;
     sockinfo->socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 	strncpy(ifr.ifr_name, interface, IFNAMSIZ);
     if (sockinfo->socket == -1)
-	{
         exit_error("Raw socket creation failed\n");
-	}
 	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_RCVTIMEO, &sockinfo->timeout, sizeof(struct timeval)) == -1)
         exit_error("Socket Time Out option configuration failed\n");
-	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_BINDTODEVICE, (void*)&ifr, sizeof(ifr)) < 0)
+	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_SNDTIMEO, &sockinfo->timeout, sizeof(struct timeval)) == -1)
+        exit_error("Socket Time Out option configuration failed\n");
+	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_BINDTODEVICE, (void*)&ifr, sizeof(ifr)) == -1)
         exit_error("Socket Interface Binding configuration failed\n");
+    if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_TIMESTAMP, &disable, sizeof(enable)) == -1)
+        exit_error("Socket Timestamp option disactivation failed\n");
+	if (setsockopt(sockinfo->socket, SOL_SOCKET, SO_PRIORITY, &priority, sizeof(priority)) == -1)
+    	exit_error("Failed to set socket priority\n");
+
 }
 
 void	free_data(void)

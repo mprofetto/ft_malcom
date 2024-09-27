@@ -6,7 +6,7 @@
 /*   By: mprofett <mprofett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 20:02:10 by mprofett          #+#    #+#             */
-/*   Updated: 2024/09/26 14:58:56 by mprofett         ###   ########.fr       */
+/*   Updated: 2024/09/27 11:49:18 by mprofett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <linux/if.h> 
+// # include <net/if.h>
+// # include <netinet/in.h>
+// # include <bits/socket.h>
+// # include <sys/socket.h>
 # include <sys/time.h>
 # include <unistd.h>
 
@@ -59,8 +64,24 @@ typedef struct ArpFrame
     unsigned char   arp_padding[PADDING_SIZE];
 }ArpFrame;
 
+typedef struct ArpReplyFrame
+{
+    unsigned char   ether_dest_mac[MAC_SIZE];
+    unsigned char   ether_src_mac[MAC_SIZE];
+    unsigned char   ether_proto[TYPE_SIZE];
+    unsigned char   arp_hardware[TYPE_SIZE];
+    unsigned char   arp_proto[TYPE_SIZE];
+    unsigned char   arp_hardware_size[1];
+    unsigned char   arp_proto_size[1];
+    unsigned char   arp_opcode[OPCODE_SIZE];
+    unsigned char   arp_src_mac[MAC_SIZE];
+    unsigned char   arp_src_ip[IP_SIZE];
+    unsigned char   arp_dest_mac[MAC_SIZE];
+    unsigned char   arp_dest_ip[IP_SIZE];
+}ArpReplyFrame;
+
 extern ArpFrame         *request_frame;
-extern ArpFrame         *reply_frame;
+extern ArpReplyFrame         *reply_frame;
 extern SocketInfo		*sockinfo;
 
 void		init_data(char *interface);
