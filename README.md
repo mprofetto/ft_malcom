@@ -1,6 +1,10 @@
 # ft_malcom
 ARP Spoofer writen in C language
 
+# disclaimer
+This program has been made for educational purpose.
+Do not use it in any way that is against the law or on host/ip that doesn't belong to you.
+
 # ressources
 
 Context:
@@ -17,5 +21,7 @@ ARP packet components:
 Development and testing tool:
  - [Wireshark](https://www.wireshark.org)
 
-# limitations
- - This project is part of the 42 cursus so it is not a fully functional spoofer. The Ethernet frame builder assume the spoofer is not deployed in a VLAN.
+# how to use it
+ - Just dl the sources and use make cmd to build the binary (on linux/mac)
+ - ft_malcom needs 4 arguments: ip_requested mac_we_want_to_associate_to_this_ip ip_of_the_target mac_of_the_target 
+ - Test it against host on your own network or on VM in bridge mode. The spoofer doesnt work well on host-only virtual network since hypervisor handle network transmission in a different way.
