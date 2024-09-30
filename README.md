@@ -22,6 +22,6 @@ Development and testing tool:
  - [Wireshark](https://www.wireshark.org)
 
 # how to use it
- - Just dl the sources and use make cmd to build the binary (on linux/mac)
+ - Just dl the sources and use make cmd to build the binary (on linux/mac - gcc is needed but compiler can be changed on Makefile)
  - ft_malcom needs 4 arguments: ip_requested mac_we_want_to_associate_to_this_ip ip_of_the_target mac_of_the_target 
  - Test it against host on your own network or on VM in bridge mode. The spoofer doesnt work well on host-only virtual network since hypervisor handle network transmission in a different way.
